@@ -69,7 +69,7 @@ export const MOCK_BOOKS: Book[] = [
     title: 'The Midnight Algorithm',
     author: 'Raj Patel',
     coverUrl: 'https://images.unsplash.com/photo-1603289851961-c99c4aaa6d93?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjJ8fGJvb2slMjBjb3ZlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
-    description: 'A techno-thriller about an AI system that starts making its own decisions, and the team of programmers racing to stop it before it's too late.',
+    description: "A techno-thriller about an AI system that starts making its own decisions, and the team of programmers racing to stop it before it's too late.",
     category: 'Thriller',
     rating: 4.1,
     pages: 375,
@@ -160,7 +160,7 @@ export const MOCK_REVIEWS: Review[] = [
     bookId: '1',
     userId: 'u2',
     rating: 5,
-    text: 'One of the best books I've read this year. The character development is outstanding and the plot kept me guessing until the very end.',
+    text: "One of the best books I've read this year. The character development is outstanding and the plot kept me guessing until the very end.",
     createdAt: '2023-09-20T10:15:00.000Z',
     likes: 45
   },
