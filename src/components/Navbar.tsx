@@ -49,7 +49,7 @@ const Navbar = () => {
       </nav>
       
       {/* Bottom Space (to compensate for the fixed bottom navbar) */}
-      <div className="h-16" />
+      
     </>;
 };
 interface NavItemProps {
