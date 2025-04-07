@@ -1,5 +1,5 @@
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { MOCK_BOOKS, MOCK_BOOK_CLUBS, MOCK_HIGHLIGHTS } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,6 +11,7 @@ import BookClubCard from "@/components/BookClubCard";
 
 const BookDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const book = MOCK_BOOKS.find(book => book.id === id);
   
   if (!book) {
@@ -27,6 +28,11 @@ const BookDetail = () => {
   const minutes = readingTime % 60;
   const formattedReadingTime = `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
 
+  // Handle start reading button click
+  const handleStartReading = () => {
+    navigate(`/reader/${id}`);
+  };
+
   return (
     <div className="container px-4 pt-16 pb-24">
       <Link to="/" className="flex items-center text-muted-foreground mb-4">
@@ -36,8 +42,9 @@ const BookDetail = () => {
       
       <div className="flex mb-6">
         <div 
-          className="w-32 h-48 rounded-lg bg-cover bg-center shadow-md flex-shrink-0"
+          className="w-32 h-48 rounded-lg bg-cover bg-center shadow-md flex-shrink-0 cursor-pointer"
           style={{ backgroundImage: `url(${coverUrl})` }}
+          onClick={handleStartReading}
         />
         <div className="ml-4">
           <h1 className="text-2xl font-semibold">{title}</h1>
@@ -54,7 +61,7 @@ const BookDetail = () => {
           </div>
           
           <div className="flex space-x-2 mt-auto">
-            <Button className="flex-1">Start Reading</Button>
+            <Button className="flex-1" onClick={handleStartReading}>Start Reading</Button>
             <Button variant="outline" className="flex-1">Add to Library</Button>
           </div>
         </div>

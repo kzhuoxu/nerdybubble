@@ -34,7 +34,7 @@ const BookCard = ({ book, size = "medium" }: BookCardProps) => {
   };
 
   return (
-    <Link to={`/book/${id}`}>
+    <Link to={`/reader/${id}`}>
       <Card className={`overflow-hidden border-0 shadow-md hover:shadow-lg transition-shadow ${sizeClasses[size].card}`}>
         <div 
           className={`${sizeClasses[size].cover} bg-cover bg-center rounded-t-lg`}
