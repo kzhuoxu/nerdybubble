@@ -1,4 +1,3 @@
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CURRENT_USER } from "@/data/mockData";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,7 +9,7 @@ const Profile = () => {
   const { name, avatar, bio, booksRead, readingGoal, readingStreak, currentlyReading, bookshelf, friends } = CURRENT_USER;
 
   return (
-    <div className="container px-4 pt-20 pb-24">
+    <div className="container px-4 pt-8 pb-24">
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center">
           <Avatar className="h-20 w-20">

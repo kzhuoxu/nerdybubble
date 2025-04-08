@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MOCK_HIGHLIGHTS, MOCK_BOOK_CLUBS, MOCK_USERS, CURRENT_USER } from "@/data/mockData";
 import HighlightCard from "@/components/HighlightCard";
@@ -28,7 +27,7 @@ const Social = () => {
   );
 
   return (
-    <div className="container px-4 pt-20 pb-24">
+    <div className="container px-4 pt-8 pb-24">
       <h1 className="text-2xl font-semibold mb-4">Social</h1>
 
       <Tabs defaultValue="activity" className="mb-8">

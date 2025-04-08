@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { MOCK_BOOKS, MOCK_USERS, MOCK_BOOK_CLUBS } from "@/data/mockData";
@@ -13,7 +12,6 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("books");
 
-  // Filter books, users, and book clubs based on search term
   const filteredBooks = MOCK_BOOKS.filter(book => 
     book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
     book.author.toLowerCase().includes(searchTerm.toLowerCase())
@@ -27,7 +25,6 @@ const Search = () => {
     club.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Generate AI book recommendations (mock for demo)
   const aiRecommendations = [
     "If you enjoyed The Silent Echo, try The Midnight Algorithm",
     "For science enthusiasts, explore Quantum Horizons",
@@ -35,7 +32,7 @@ const Search = () => {
   ];
 
   return (
-    <div className="container px-4 pt-20 pb-24">
+    <div className="container px-4 pt-8 pb-24">
       <h1 className="text-2xl font-semibold mb-4">Search</h1>
 
       <div className="relative mb-6">
