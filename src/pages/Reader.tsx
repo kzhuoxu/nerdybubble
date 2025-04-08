@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MOCK_BOOKS, MOCK_HIGHLIGHTS } from "@/data/mockData";
@@ -16,6 +15,7 @@ const Reader = () => {
   const [showControls, setShowControls] = useState(true);
   const [selectedText, setSelectedText] = useState("");
   const [selectionPosition, setSelectionPosition] = useState<{ x: number, y: number } | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const book = MOCK_BOOKS.find(book => book.id === id);
   
@@ -32,18 +32,20 @@ const Reader = () => {
 
   // Toggle controls visibility after a short delay
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowControls(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
+    if (showControls) {
+      const timer = setTimeout(() => {
+        setShowControls(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
   }, [showControls]);
 
   // Handle tap on screen to toggle controls
   const handleScreenTap = () => {
     // Only show controls if no text is selected
     if (!selectedText) {
-      setShowControls(true);
+      setShowControls(!showControls);
     }
   };
 
@@ -57,9 +59,11 @@ const Reader = () => {
         // Calculate position for the selection bubble
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
+        
+        // Position the bubble above the selection
         setSelectionPosition({
           x: rect.left + (rect.width / 2),
-          y: rect.top - 10
+          y: rect.top - 15
         });
       } else {
         setSelectedText("");
@@ -80,24 +84,24 @@ const Reader = () => {
     <div className="min-h-screen bg-reader-bg" onClick={handleScreenTap}>
       {/* Top controls */}
       {showControls && (
-        <div className="fixed top-0 left-0 w-full bg-background/90 backdrop-blur-sm z-40 transition-all duration-300 py-4 px-4 border-b border-border">
-          <div className="flex justify-between items-center">
+        <div className="fixed top-0 left-0 w-full bg-background/95 backdrop-blur-sm z-40 transition-all duration-300 py-3 px-4 border-b border-border">
+          <div className="flex justify-between items-center max-w-screen-md mx-auto">
             <button 
               className="flex items-center text-muted-foreground"
               onClick={() => navigate(`/book/${id}`)}
             >
               <ChevronLeft size={20} />
-              <span className="ml-1 line-clamp-1">{book.title}</span>
+              <span className="ml-1 line-clamp-1 text-sm font-medium">{book.title}</span>
             </button>
-            <div className="flex items-center space-x-4">
-              <button className="text-muted-foreground">
-                <Bookmark size={20} />
+            <div className="flex items-center space-x-3">
+              <button className="text-muted-foreground p-1.5 hover:text-foreground transition-colors">
+                <Bookmark size={18} />
               </button>
-              <button className="text-muted-foreground">
-                <Share size={20} />
+              <button className="text-muted-foreground p-1.5 hover:text-foreground transition-colors">
+                <Share size={18} />
               </button>
-              <button className="text-muted-foreground">
-                <Settings size={20} />
+              <button className="text-muted-foreground p-1.5 hover:text-foreground transition-colors">
+                <Settings size={18} />
               </button>
             </div>
           </div>
@@ -105,18 +109,18 @@ const Reader = () => {
       )}
 
       {/* Reading content */}
-      <ScrollArea className="h-screen pt-16 pb-24">
-        <div className={`reader-content pb-28 ${readingMode === "focus" ? "focus-mode" : "explore-mode"}`}>
+      <ScrollArea className="h-screen pt-8 pb-20" ref={contentRef}>
+        <div className={`reader-content px-4 md:px-8 pb-28 max-w-screen-md mx-auto ${readingMode === "focus" ? "focus-mode" : "explore-mode"}`}>
           {readingMode === "focus" ? (
             // Focus mode - clean reading experience
-            <div>
-              <h1 className="text-3xl font-semibold mb-6 mt-4">Chapter 1: The Beginning</h1>
+            <div className="pt-4">
+              <h1 className="text-2xl md:text-3xl font-semibold mb-6">Chapter 1: The Beginning</h1>
               {renderContentWithHighlights(book.content, MOCK_HIGHLIGHTS)}
             </div>
           ) : (
             // Explore mode - AI enhanced reading experience
-            <div>
-              <h1 className="text-3xl font-semibold mb-6 mt-4">Chapter 1: The Beginning</h1>
+            <div className="pt-4">
+              <h1 className="text-2xl md:text-3xl font-semibold mb-6">Chapter 1: The Beginning</h1>
               {renderContentWithAIHighlights(book.content)}
               
               <div className="mt-8 mb-4 p-4 bg-app-teal-500/10 rounded-lg">
@@ -162,20 +166,20 @@ const Reader = () => {
       {/* Selection highlight bubble - only appears when text is selected in focus mode */}
       {readingMode === "focus" && selectedText && selectionPosition && (
         <div 
-          className="fixed z-50 transform -translate-x-1/2"
+          className="fixed z-50 transform -translate-x-1/2 -translate-y-full"
           style={{ 
             left: `${selectionPosition.x}px`, 
             top: `${selectionPosition.y}px` 
           }}
         >
-          <div className="bg-background/95 backdrop-blur-sm shadow-lg rounded-full border border-border py-2 px-3 flex items-center space-x-4">
-            <button className="text-muted-foreground hover:text-yellow-500 transition-colors">
+          <div className="bg-background/95 backdrop-blur-sm shadow-lg rounded-full border border-border py-1.5 px-3 flex items-center space-x-3">
+            <button className="text-muted-foreground hover:text-yellow-500 transition-colors p-1">
               <span className="bg-yellow-200 h-4 w-4 block rounded-full"></span>
             </button>
-            <button className="text-muted-foreground hover:text-app-blue-500 transition-colors">
+            <button className="text-muted-foreground hover:text-app-blue-500 transition-colors p-1">
               <span className="bg-app-blue-200 h-4 w-4 block rounded-full"></span>
             </button>
-            <button className="text-muted-foreground hover:text-foreground transition-colors">
+            <button className="text-muted-foreground hover:text-foreground transition-colors p-1">
               <MoreHorizontal size={16} />
             </button>
           </div>

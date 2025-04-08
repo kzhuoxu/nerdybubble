@@ -15,7 +15,7 @@ const ReadingModeSwitcher = ({ currentMode, onModeChange }: ReadingModeSwitcherP
       <Tabs 
         defaultValue={currentMode}
         onValueChange={(value) => onModeChange(value as ReadingMode)}
-        className="w-64 bg-background/80 backdrop-blur-lg rounded-full shadow-lg border border-border"
+        className="w-64 bg-background/90 backdrop-blur-lg rounded-full shadow-lg border border-border"
       >
         <TabsList className="w-full">
           <TabsTrigger 
@@ -23,14 +23,14 @@ const ReadingModeSwitcher = ({ currentMode, onModeChange }: ReadingModeSwitcherP
             className="flex-1 gap-1 rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             <BookOpenText size={16} />
-            <span>Focus</span>
+            <span className="ml-1">Focus</span>
           </TabsTrigger>
           <TabsTrigger 
             value="explore" 
             className="flex-1 gap-1 rounded-full data-[state=active]:bg-app-teal-500 data-[state=active]:text-white"
           >
             <Sparkles size={16} />
-            <span>Explore</span>
+            <span className="ml-1">Explore</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>
