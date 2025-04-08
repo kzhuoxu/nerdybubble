@@ -1,15 +1,22 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CURRENT_USER } from "@/data/mockData";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; 
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { BookOpen, Settings, Users, UserCheck, Target, Medal } from "lucide-react";
 import BookshelfRow from "@/components/BookshelfRow";
-
 const Profile = () => {
-  const { name, avatar, bio, booksRead, readingGoal, readingStreak, currentlyReading, bookshelf, friends } = CURRENT_USER;
-
-  return (
-    <div className="container px-4 pt-8 pb-24">
+  const {
+    name,
+    avatar,
+    bio,
+    booksRead,
+    readingGoal,
+    readingStreak,
+    currentlyReading,
+    bookshelf,
+    friends
+  } = CURRENT_USER;
+  return <div className="container px-4 pt-20 pb-24">
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center">
           <Avatar className="h-20 w-20">
@@ -70,43 +77,28 @@ const Profile = () => {
                 <span className="font-semibold">{booksRead}</span> of {readingGoal} books in 2025
               </p>
               <div className="w-full h-2 bg-muted rounded-full mt-2">
-                <div 
-                  className="h-2 bg-primary rounded-full" 
-                  style={{ width: `${(booksRead / readingGoal!) * 100}%` }}
-                ></div>
+                <div className="h-2 bg-primary rounded-full" style={{
+                width: `${booksRead / readingGoal! * 100}%`
+              }}></div>
               </div>
             </div>
           </div>
 
-          {currentlyReading && currentlyReading.length > 0 && (
-            <section>
+          {currentlyReading && currentlyReading.length > 0 && <section>
               <h2 className="text-xl font-medium mb-3">Currently Reading</h2>
-              <BookshelfRow 
-                title="" 
-                books={currentlyReading} 
-                size="medium"
-              />
-            </section>
-          )}
+              <BookshelfRow title="" books={currentlyReading} size="medium" />
+            </section>}
 
-          {bookshelf && bookshelf.length > 0 && (
-            <section>
+          {bookshelf && bookshelf.length > 0 && <section>
               <h2 className="text-xl font-medium mb-3">My Bookshelf</h2>
               <ScrollArea className="h-[400px] pr-4">
                 <div className="grid grid-cols-2 gap-4">
-                  {bookshelf.map((book) => (
-                    <div key={book.id} className="row-span-1">
-                      <BookshelfRow 
-                        title="" 
-                        books={[book]} 
-                        size="small"
-                      />
-                    </div>
-                  ))}
+                  {bookshelf.map(book => <div key={book.id} className="row-span-1">
+                      <BookshelfRow title="" books={[book]} size="small" />
+                    </div>)}
                 </div>
               </ScrollArea>
-            </section>
-          )}
+            </section>}
         </TabsContent>
 
         <TabsContent value="friends">
@@ -178,8 +170,6 @@ const Profile = () => {
           </div>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default Profile;
