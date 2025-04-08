@@ -6,17 +6,28 @@ import UserAvatar from "@/components/UserAvatar";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, Medal, Target } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+
 const Social = () => {
   // Get highlights from friends
   const friendIds = CURRENT_USER.friends || [];
-  const friendHighlights = MOCK_HIGHLIGHTS.filter(h => friendIds.includes(h.userId)).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const friendHighlights = MOCK_HIGHLIGHTS.filter(h => 
+    friendIds.includes(h.userId)
+  ).sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   // Get all book clubs
-  const myBookClubs = MOCK_BOOK_CLUBS.filter(club => club.members.includes(CURRENT_USER.id));
+  const myBookClubs = MOCK_BOOK_CLUBS.filter(club => 
+    club.members.includes(CURRENT_USER.id)
+  );
 
   // Get all friends
-  const friends = MOCK_USERS.filter(user => friendIds.includes(user.id));
-  return <div className="container px-4 pt-20 pb-24">
+  const friends = MOCK_USERS.filter(user => 
+    friendIds.includes(user.id)
+  );
+
+  return (
+    <div className="container px-4 pt-8 pb-24">
       <h1 className="text-2xl font-semibold mb-4">Social</h1>
 
       <Tabs defaultValue="activity" className="mb-8">
@@ -28,13 +39,21 @@ const Social = () => {
 
         <TabsContent value="activity" className="mt-0">
           <div className="space-y-4">
-            {friendHighlights.map(highlight => <HighlightCard key={highlight.id} highlight={highlight} showBook={true} />)}
+            {friendHighlights.map((highlight) => (
+              <HighlightCard 
+                key={highlight.id} 
+                highlight={highlight}
+                showBook={true}
+              />
+            ))}
           </div>
         </TabsContent>
 
         <TabsContent value="book-clubs" className="mt-0">
           <div className="grid grid-cols-1 gap-4">
-            {myBookClubs.map(club => <BookClubCard key={club.id} bookClub={club} />)}
+            {myBookClubs.map((club) => (
+              <BookClubCard key={club.id} bookClub={club} />
+            ))}
           </div>
           <button className="w-full py-3 mt-4 text-center text-sm text-primary border border-dashed border-primary rounded-md">
             + Create a new book club
@@ -53,10 +72,11 @@ const Social = () => {
                   <p className="text-sm">
                     <span className="font-semibold">{CURRENT_USER.booksRead}</span> of {CURRENT_USER.readingGoal} books
                   </p>
-                  <div className="w-80 h-2 bg-muted rounded-full mt-1">
-                    <div className="h-2 bg-primary rounded-full" style={{
-                    width: `${CURRENT_USER.booksRead / CURRENT_USER.readingGoal! * 100}%`
-                  }}></div>
+                  <div className="w-40 h-2 bg-muted rounded-full mt-1">
+                    <div 
+                      className="h-2 bg-primary rounded-full" 
+                      style={{ width: `${(CURRENT_USER.booksRead / CURRENT_USER.readingGoal!) * 100}%` }}
+                    ></div>
                   </div>
                 </div>
                 <Badge variant="outline">2025 Goal</Badge>
@@ -100,22 +120,28 @@ const Social = () => {
       <section>
         <h2 className="text-xl font-medium mb-3">Friends</h2>
         <div className="grid grid-cols-2 gap-4">
-          {friends.map(friend => <div key={friend.id} className="bg-muted/30 p-3 rounded-lg">
+          {friends.map((friend) => (
+            <div key={friend.id} className="bg-muted/30 p-3 rounded-lg">
               <div className="flex items-start">
                 <UserAvatar user={friend} size="md" />
                 <div className="ml-2 overflow-hidden">
                   <p className="font-medium line-clamp-1">{friend.name}</p>
                   <p className="text-xs text-muted-foreground line-clamp-1">
-                    {friend.currentlyReading && friend.currentlyReading.length > 0 ? `Reading: ${friend.currentlyReading[0].title}` : "Not reading currently"}
+                    {friend.currentlyReading && friend.currentlyReading.length > 0 
+                      ? `Reading: ${friend.currentlyReading[0].title}`
+                      : "Not reading currently"}
                   </p>
                 </div>
               </div>
-            </div>)}
+            </div>
+          ))}
           <button className="border border-dashed border-primary rounded-lg p-3 text-center text-primary text-sm">
             + Add Friends
           </button>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 };
+
 export default Social;
