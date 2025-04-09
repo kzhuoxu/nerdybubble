@@ -1,12 +1,14 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MOCK_BOOKS, MOCK_HIGHLIGHTS } from "@/data/mockData";
+import { MOCK_BOOKS, MOCK_HIGHLIGHTS, CURRENT_USER } from "@/data/mockData";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Settings, Bookmark, Share, MoreHorizontal } from "lucide-react";
-import { ReadingMode } from "@/types";
+import { ChevronLeft, Settings, Bookmark, Share, MoreHorizontal, MessageCircle } from "lucide-react";
+import { ReadingMode, Comment } from "@/types";
 import ReadingModeSwitcher from "@/components/ReadingModeSwitcher";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import CommentDialog from "@/components/reader/CommentDialog";
 
 const Reader = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,7 +18,9 @@ const Reader = () => {
   const [selectedText, setSelectedText] = useState("");
   const [selectionPosition, setSelectionPosition] = useState<{ x: number, y: number } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-
+  const [showCommentDialog, setShowCommentDialog] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  
   const book = MOCK_BOOKS.find(book => book.id === id);
   
   if (!book || !book.content) {
@@ -79,6 +83,36 @@ const Reader = () => {
       document.removeEventListener("touchend", handleTextSelection);
     };
   }, []);
+
+  // Handle adding a new comment
+  const handleAddComment = (text: string) => {
+    const newComment: Comment = {
+      id: `comment-${Date.now()}`,
+      highlightId: `highlight-${Date.now()}`,
+      userId: CURRENT_USER.id,
+      text: text,
+      createdAt: new Date().toISOString(),
+      likes: 0
+    };
+    
+    setComments(prev => [...prev, newComment]);
+  };
+
+  // Handle liking a comment
+  const handleLikeComment = (commentId: string) => {
+    setComments(prev => 
+      prev.map(comment => 
+        comment.id === commentId 
+          ? { ...comment, likes: comment.likes + 1 } 
+          : comment
+      )
+    );
+  };
+
+  // Open comments dialog
+  const handleOpenComments = () => {
+    setShowCommentDialog(true);
+  };
 
   return (
     <div className="min-h-screen bg-reader-bg" onClick={handleScreenTap}>
@@ -176,8 +210,11 @@ const Reader = () => {
             <button className="text-muted-foreground hover:text-yellow-500 transition-colors p-1">
               <span className="bg-yellow-200 h-4 w-4 block rounded-full"></span>
             </button>
-            <button className="text-muted-foreground hover:text-app-blue-500 transition-colors p-1">
-              <span className="bg-app-blue-200 h-4 w-4 block rounded-full"></span>
+            <button 
+              className="text-muted-foreground hover:text-app-blue-500 transition-colors p-1"
+              onClick={handleOpenComments}
+            >
+              <MessageCircle size={16} />
             </button>
             <button className="text-muted-foreground hover:text-foreground transition-colors p-1">
               <MoreHorizontal size={16} />
@@ -185,6 +222,16 @@ const Reader = () => {
           </div>
         </div>
       )}
+
+      {/* Comments dialog */}
+      <CommentDialog 
+        isOpen={showCommentDialog}
+        onClose={() => setShowCommentDialog(false)}
+        selectedText={selectedText}
+        comments={comments}
+        onAddComment={handleAddComment}
+        onLikeComment={handleLikeComment}
+      />
     </div>
   );
 };
