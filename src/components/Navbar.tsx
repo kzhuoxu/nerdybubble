@@ -3,12 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { CURRENT_USER } from "@/data/mockData";
-
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
-  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -20,12 +18,11 @@ const Navbar = () => {
   // Handle reader navigation - go to the first book the user is currently reading or the first book
   const handleReaderNavigation = () => {
     if (CURRENT_USER.currentlyReading && CURRENT_USER.currentlyReading.length > 0) {
-      navigate(`/book/${CURRENT_USER.currentlyReading[0].id}`);
+      navigate(`/reader/${CURRENT_USER.currentlyReading[0].id}`);
     } else if (CURRENT_USER.bookshelf && CURRENT_USER.bookshelf.length > 0) {
-      navigate(`/book/${CURRENT_USER.bookshelf[0].id}`);
+      navigate(`/reader/${CURRENT_USER.bookshelf[0].id}`);
     }
   };
-  
   return <>
       {/* Top Space for iOS status bar */}
       <div className="h-safe-top bg-background" />
@@ -45,7 +42,7 @@ const Navbar = () => {
         <div className="flex justify-around items-center max-w-screen-lg mx-auto">
           <NavItem to="/" label="Home" icon={<Home size={22} />} isActive={location.pathname === '/'} />
           <NavItem to="/social" label="Social" icon={<Users size={22} />} isActive={location.pathname === '/social'} />
-          <NavButton label="Reader" icon={<BookOpen size={22} />} isActive={false} onClick={handleReaderNavigation} />
+          <NavButton label="Reader" icon={<BookOpen size={22} />} isActive={location.pathname.includes('/reader')} onClick={handleReaderNavigation} />
           <NavItem to="/search" label="Search" icon={<Search size={22} />} isActive={location.pathname === '/search'} />
           <NavItem to="/profile" label="Profile" icon={<User size={22} />} isActive={location.pathname === '/profile'} />
         </div>
@@ -55,7 +52,6 @@ const Navbar = () => {
       
     </>;
 };
-
 interface NavItemProps {
   to: string;
   label: string;
@@ -73,7 +69,6 @@ const NavItem = ({
       <span className="text-xs mt-1">{label}</span>
     </Link>;
 };
-
 interface NavButtonProps {
   label: string;
   icon: React.ReactNode;
@@ -91,5 +86,4 @@ const NavButton = ({
       <span className="text-xs mt-1">{label}</span>
     </button>;
 };
-
 export default Navbar;
