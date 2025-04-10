@@ -10,7 +10,6 @@ import Home from "./pages/Home";
 import Social from "./pages/Social";
 import Profile from "./pages/Profile";
 import BookDetail from "./pages/BookDetail";
-import Reader from "./pages/Reader";
 import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 
@@ -44,7 +43,6 @@ const App = () => (
               <Navbar />
               <BookDetail />
             </>} />
-            <Route path="/reader/:id" element={<Reader />} />
             <Route path="/search" element={<>
               <Navbar />
               <Search />
