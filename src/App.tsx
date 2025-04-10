@@ -12,6 +12,8 @@ import Profile from "./pages/Profile";
 import BookDetail from "./pages/BookDetail";
 import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
+import BookClubs from "./pages/BookClubs";
+import BookClubDetail from "./pages/BookClubDetail";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,14 @@ const App = () => (
             <Route path="/search" element={<>
               <Navbar />
               <Search />
+            </>} />
+            <Route path="/book-clubs" element={<>
+              <Navbar />
+              <BookClubs />
+            </>} />
+            <Route path="/book-club/:id" element={<>
+              <Navbar />
+              <BookClubDetail />
             </>} />
             <Route path="*" element={<NotFound />} />
           </Routes>

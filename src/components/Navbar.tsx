@@ -1,4 +1,5 @@
-import { Home, Users, User, Search, BookOpen } from "lucide-react";
+
+import { Home, Users, User, Search, BookOpen, Library } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -46,7 +47,7 @@ const Navbar = () => {
           <NavItem to="/" label="Home" icon={<Home size={22} />} isActive={location.pathname === '/'} />
           <NavItem to="/social" label="Social" icon={<Users size={22} />} isActive={location.pathname === '/social'} />
           <NavButton label="Reader" icon={<BookOpen size={22} />} isActive={false} onClick={handleReaderNavigation} />
-          <NavItem to="/search" label="Search" icon={<Search size={22} />} isActive={location.pathname === '/search'} />
+          <NavItem to="/book-clubs" label="Clubs" icon={<Library size={22} />} isActive={location.pathname === '/book-clubs' || location.pathname.startsWith('/book-club/')} />
           <NavItem to="/profile" label="Profile" icon={<User size={22} />} isActive={location.pathname === '/profile'} />
         </div>
       </nav>

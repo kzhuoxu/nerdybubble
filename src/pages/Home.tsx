@@ -1,8 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import BookshelfRow from "@/components/BookshelfRow";
 import { MOCK_BOOKS, MOCK_BOOK_CLUBS, CURRENT_USER } from "@/data/mockData";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, ArrowRight } from "lucide-react";
 import BookClubCard from "@/components/BookClubCard";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const featuredBooks = MOCK_BOOKS.slice(0, 3);
@@ -31,9 +33,19 @@ const Home = () => {
       </section>
 
       <section>
-        <h2 className="text-xl font-medium mb-3">Book Clubs</h2>
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-xl font-medium">Book Clubs</h2>
+          <Link to="/book-clubs">
+            <Button variant="ghost" size="sm" className="gap-1">
+              <span>View All</span>
+              <ArrowRight size={16} />
+            </Button>
+          </Link>
+        </div>
         <div className="grid grid-cols-1 gap-4">
-          {MOCK_BOOK_CLUBS.map(club => <BookClubCard key={club.id} bookClub={club} />)}
+          {MOCK_BOOK_CLUBS.slice(0, 2).map(club => 
+            <BookClubCard key={club.id} bookClub={club} />
+          )}
         </div>
       </section>
     </div>;
