@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { User } from "@/types";
-import { UserAvatar } from "@/components/UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
 import { CURRENT_USER } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, ThumbsUp } from "lucide-react";
@@ -45,8 +45,8 @@ const MarginAnnotation = ({
       <div className={`absolute left-0 top-0 w-1 h-full ${highlightColor} rounded-sm`}></div>
       <div className="pl-3">
         <div className="flex items-center mb-1">
-          <UserAvatar user={annotation.user} className="w-5 h-5 mr-1.5" />
-          <div className="text-xs font-medium">{annotation.user.name}</div>
+          <UserAvatar user={annotation.user} size="xs" />
+          <div className="text-xs font-medium ml-1.5">{annotation.user.name}</div>
           <div className="text-xs text-muted-foreground ml-auto">{annotation.timestamp}</div>
         </div>
         <div className="text-sm mb-1.5">{annotation.text}</div>

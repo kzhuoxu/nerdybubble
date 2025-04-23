@@ -8,6 +8,9 @@ import CommentDialog from "@/components/reader/CommentDialog";
 import ReaderControls from "@/components/reader/ReaderControls";
 import ReaderContent from "@/components/reader/ReaderContent";
 import SelectionBubble from "@/components/reader/SelectionBubble";
+import { HighlightColor } from "@/components/reader/HighlightColorPicker";
+import { toast } from "@/components/ui/use-toast";
+import { Annotation } from "@/components/reader/MarginAnnotation";
 
 const Reader = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +22,14 @@ const Reader = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [showCommentDialog, setShowCommentDialog] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  
+  // New states for annotations
+  const [showAnnotations, setShowAnnotations] = useState(true);
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [communityHighlights, setCommunityHighlights] = useState<any[]>(
+    MOCK_HIGHLIGHTS.filter(h => h.bookId === id)
+  );
+  const [visibilityFilter, setVisibilityFilter] = useState<"all" | "mine" | "friends">("all");
   
   const book = MOCK_BOOKS.find(book => book.id === id);
   
@@ -53,35 +64,37 @@ const Reader = () => {
   };
 
   // Handle text selection
-  useEffect(() => {
-    const handleTextSelection = () => {
-      const selection = window.getSelection();
-      if (selection && selection.toString().trim() !== "") {
-        setSelectedText(selection.toString().trim());
-        
-        // Calculate position for the selection bubble
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        
-        // Position the bubble above the selection
-        setSelectionPosition({
-          x: rect.left + (rect.width / 2),
-          y: rect.top - 15
-        });
-      } else {
-        setSelectedText("");
-        setSelectionPosition(null);
-      }
-    };
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim() !== "") {
+      setSelectedText(selection.toString().trim());
+      
+      // Calculate position for the selection bubble
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      
+      // Position the bubble above the selection
+      setSelectionPosition({
+        x: rect.left + (rect.width / 2),
+        y: rect.top - 15
+      });
+    } else {
+      setSelectedText("");
+      setSelectionPosition(null);
+    }
+  };
 
-    document.addEventListener("mouseup", handleTextSelection);
-    document.addEventListener("touchend", handleTextSelection);
-
-    return () => {
-      document.removeEventListener("mouseup", handleTextSelection);
-      document.removeEventListener("touchend", handleTextSelection);
-    };
-  }, []);
+  // Handle highlighting text
+  const handleHighlightText = (color: HighlightColor) => {
+    if (!selectedText) return;
+    
+    // Create a new highlight
+    // Implementation goes here
+    
+    // Clear the selection
+    setSelectedText("");
+    setSelectionPosition(null);
+  };
 
   // Handle adding a new comment
   const handleAddComment = (text: string) => {
@@ -113,6 +126,40 @@ const Reader = () => {
     setShowCommentDialog(true);
   };
 
+  // Handle share functionality
+  const handleShare = () => {
+    toast({
+      title: "Share",
+      description: "Sharing functionality will be implemented soon.",
+    });
+    
+    setSelectedText("");
+    setSelectionPosition(null);
+  };
+
+  // Handle AI insights
+  const handleGetInsights = () => {
+    toast({
+      title: "AI Insights",
+      description: "Analyzing your selected text...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "AI Analysis Complete",
+        description: "This passage introduces a key theme that will develop throughout the story.",
+      });
+    }, 2000);
+    
+    setSelectedText("");
+    setSelectionPosition(null);
+  };
+
+  // Handle adding a note
+  const handleAddNote = () => {
+    setShowCommentDialog(true);
+  };
+
   return (
     <div className="min-h-screen bg-reader-bg" onClick={handleScreenTap}>
       {/* Top controls */}
@@ -127,6 +174,11 @@ const Reader = () => {
         book={book}
         readingMode={readingMode}
         contentRef={contentRef}
+        showAnnotations={showAnnotations}
+        annotations={annotations}
+        communityHighlights={communityHighlights}
+        visibilityFilter={visibilityFilter}
+        handleTextSelection={handleTextSelection}
       />
 
       {/* Reading mode switcher */}
@@ -140,7 +192,14 @@ const Reader = () => {
         <SelectionBubble
           selectedText={selectedText}
           selectionPosition={selectionPosition}
-          onOpenComments={handleOpenComments}
+          onHighlight={handleHighlightText}
+          onAddNote={handleAddNote}
+          onShare={handleShare}
+          onGetInsights={handleGetInsights}
+          onClose={() => {
+            setSelectedText("");
+            setSelectionPosition(null);
+          }}
         />
       )}
 
