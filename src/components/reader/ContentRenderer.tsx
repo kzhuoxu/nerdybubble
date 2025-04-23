@@ -1,5 +1,6 @@
 
 import { Highlight } from "@/types";
+import { HIGHLIGHT_COLORS } from "./HighlightColorPicker";
 
 interface ContentRendererProps {
   content: string;
@@ -7,7 +8,7 @@ interface ContentRendererProps {
   mode: "focus" | "explore";
 }
 
-const ContentRenderer = ({ content, highlights, mode }: ContentRendererProps) => {
+const ContentRenderer = ({ content, highlights = [], mode }: ContentRendererProps) => {
   if (mode === "focus") {
     return <>{renderContentWithHighlights(content, highlights)}</>;
   } else {
@@ -36,18 +37,48 @@ const ContentRenderer = ({ content, highlights, mode }: ContentRendererProps) =>
 };
 
 // Helper function to render content with user highlights
-const renderContentWithHighlights = (content: string, highlights: any[] = []) => {
+const renderContentWithHighlights = (content: string, highlights: Highlight[] = []) => {
   // For demo purposes, just render the content with a few simulated highlights
   const paragraphs = content.split("\n\n").filter(p => p.trim() !== "");
   
   return paragraphs.map((paragraph, index) => {
-    // Simulate some paragraphs having highlights
-    if (index === 1 || index === 3) {
+    // Simulate some paragraphs having different colored highlights
+    if (index === 1) {
       return (
         <p key={index}>
           {paragraph.substring(0, 40)}
-          <span className="highlight">{paragraph.substring(40, 120)}</span>
+          <span className="bg-yellow-200">{paragraph.substring(40, 120)}</span>
           {paragraph.substring(120)}
+        </p>
+      );
+    }
+    
+    if (index === 3) {
+      return (
+        <p key={index}>
+          {paragraph.substring(0, 60)}
+          <span className="bg-blue-200">{paragraph.substring(60, 140)}</span>
+          {paragraph.substring(140)}
+        </p>
+      );
+    }
+    
+    if (index === 5) {
+      return (
+        <p key={index}>
+          {paragraph.substring(0, 20)}
+          <span className="bg-green-200">{paragraph.substring(20, 100)}</span>
+          {paragraph.substring(100)}
+        </p>
+      );
+    }
+    
+    if (index === 7) {
+      return (
+        <p key={index}>
+          {paragraph.substring(0, 80)}
+          <span className="bg-purple-200">{paragraph.substring(80, 160)}</span>
+          {paragraph.substring(160)}
         </p>
       );
     }

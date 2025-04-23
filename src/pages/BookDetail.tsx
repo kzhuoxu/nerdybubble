@@ -4,16 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Star, Clock, BookOpen, Users, MessageSquare, ChevronLeft, X } from "lucide-react";
+import { 
+  Star, Clock, BookOpen, Users, MessageCircle, ChevronLeft, 
+  X, Bookmark, BookmarkCheck, List
+} from "lucide-react";
 import HighlightCard from "@/components/HighlightCard";
 import BookClubCard from "@/components/BookClubCard";
 import { useState, useRef, useEffect } from "react";
-import { ReadingMode, Comment } from "@/types";
+import { ReadingMode, Comment, Highlight as HighlightType } from "@/types";
 import ReadingModeSwitcher from "@/components/ReadingModeSwitcher";
 import CommentDialog from "@/components/reader/CommentDialog";
 import ReaderControls from "@/components/reader/ReaderControls";
 import ReaderContent from "@/components/reader/ReaderContent";
 import SelectionBubble from "@/components/reader/SelectionBubble";
+import { HighlightColor } from "@/components/reader/HighlightColorPicker";
+import { toast } from "@/components/ui/use-toast";
+import AnnotationSidebar from "@/components/reader/AnnotationSidebar";
+import { Annotation } from "@/components/reader/MarginAnnotation";
 
 const BookDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +37,23 @@ const BookDetail = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [showCommentDialog, setShowCommentDialog] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
-  
+
+  // New states for the new features
+  const [showAnnotationSidebar, setShowAnnotationSidebar] = useState(false);
+  const [userHighlights, setUserHighlights] = useState<HighlightType[]>([]);
+  const [communityHighlights, setCommunityHighlights] = useState<HighlightType[]>(MOCK_HIGHLIGHTS.filter(h => h.bookId === id));
+  const [annotations, setAnnotations] = useState<Annotation[]>([
+    {
+      id: "note-1",
+      user: CURRENT_USER,
+      text: "This is an important passage about the main character's development.",
+      timestamp: new Date().toISOString(),
+      likes: 3,
+      replies: 1,
+    }
+  ]);
+  const [visibilityFilter, setVisibilityFilter] = useState<"all" | "mine" | "friends">("all");
+
   if (!book) {
     return <div className="p-8 text-center">Book not found</div>;
   }
@@ -65,37 +88,95 @@ const BookDetail = () => {
   };
 
   // Handle text selection
-  useEffect(() => {
+  const handleTextSelection = () => {
     if (!isReading) return;
     
-    const handleTextSelection = () => {
-      const selection = window.getSelection();
-      if (selection && selection.toString().trim() !== "") {
-        setSelectedText(selection.toString().trim());
-        
-        // Calculate position for the selection bubble
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        
-        // Position the bubble above the selection
-        setSelectionPosition({
-          x: rect.left + (rect.width / 2),
-          y: rect.top - 15
-        });
-      } else {
-        setSelectedText("");
-        setSelectionPosition(null);
-      }
-    };
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim() !== "") {
+      setSelectedText(selection.toString().trim());
+      
+      // Calculate position for the selection bubble
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      
+      // Position the bubble above the selection
+      setSelectionPosition({
+        x: rect.left + (rect.width / 2),
+        y: rect.top - 15
+      });
+    } else {
+      setSelectedText("");
+      setSelectionPosition(null);
+    }
+  };
 
-    document.addEventListener("mouseup", handleTextSelection);
-    document.addEventListener("touchend", handleTextSelection);
-
-    return () => {
-      document.removeEventListener("mouseup", handleTextSelection);
-      document.removeEventListener("touchend", handleTextSelection);
+  // Handle highlighting text
+  const handleHighlightText = (color: HighlightColor) => {
+    if (!selectedText) return;
+    
+    // Create a new highlight
+    const newHighlight: HighlightType = {
+      id: `highlight-${Date.now()}`,
+      bookId: book.id,
+      userId: CURRENT_USER.id,
+      text: selectedText,
+      chapter: 1,
+      position: 0,
+      createdAt: new Date().toISOString(),
+      likes: 0,
+      color: color
     };
-  }, [isReading]);
+    
+    // Add to user highlights and community highlights
+    setUserHighlights(prev => [...prev, newHighlight]);
+    setCommunityHighlights(prev => [...prev, newHighlight]);
+    
+    // Show toast confirmation
+    toast({
+      title: "Highlight added",
+      description: "Your highlight has been saved.",
+    });
+    
+    // Clear the selection
+    setSelectedText("");
+    setSelectionPosition(null);
+  };
+
+  // Handle adding a note
+  const handleAddNote = () => {
+    if (!selectedText) return;
+    
+    setShowCommentDialog(true);
+  };
+
+  // Handle sharing
+  const handleShare = () => {
+    toast({
+      title: "Share",
+      description: "Sharing functionality will be implemented soon.",
+    });
+    
+    setSelectedText("");
+    setSelectionPosition(null);
+  };
+
+  // Handle getting AI insights
+  const handleGetInsights = () => {
+    toast({
+      title: "AI Insights",
+      description: "Analyzing your selected text...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "AI Analysis Complete",
+        description: "This passage introduces a key theme that will develop throughout the story.",
+      });
+    }, 2000);
+    
+    setSelectedText("");
+    setSelectionPosition(null);
+  };
 
   // Handle adding a new comment
   const handleAddComment = (text: string) => {
@@ -109,6 +190,18 @@ const BookDetail = () => {
     };
     
     setComments(prev => [...prev, newComment]);
+    
+    // Also add as annotation
+    const newAnnotation: Annotation = {
+      id: `note-${Date.now()}`,
+      user: CURRENT_USER,
+      text: text,
+      timestamp: new Date().toISOString(),
+      likes: 0,
+      replies: 0,
+    };
+    
+    setAnnotations(prev => [...prev, newAnnotation]);
   };
 
   // Handle liking a comment
@@ -122,11 +215,6 @@ const BookDetail = () => {
     );
   };
 
-  // Open comments dialog
-  const handleOpenComments = () => {
-    setShowCommentDialog(true);
-  };
-
   // Start reading
   const handleStartReading = () => {
     setIsReading(true);
@@ -137,34 +225,56 @@ const BookDetail = () => {
     setIsReading(false);
     setSelectedText("");
     setSelectionPosition(null);
+    setShowAnnotationSidebar(false);
+  };
+
+  // Toggle sidebar visibility
+  const toggleAnnotationSidebar = () => {
+    setShowAnnotationSidebar(!showAnnotationSidebar);
   };
 
   if (isReading) {
     return (
       <div className="min-h-screen bg-reader-bg" onClick={handleScreenTap}>
         {/* Top controls */}
-        <div className="fixed top-0 left-0 w-full bg-background/95 backdrop-blur-sm z-40 transition-all duration-300 py-3 px-4 border-b border-border">
-          <div className="flex justify-between items-center max-w-screen-md mx-auto">
-            <button 
-              className="flex items-center text-muted-foreground"
-              onClick={handleExitReading}
-            >
-              <ChevronLeft size={20} />
-              <span className="ml-1 line-clamp-1 text-sm font-medium">{book.title}</span>
-            </button>
-            <div className="flex items-center space-x-3">
-              <button className="text-muted-foreground p-1.5 hover:text-foreground transition-colors">
-                <X size={18} onClick={handleExitReading} />
+        {showControls && (
+          <div className="fixed top-0 left-0 w-full bg-background/95 backdrop-blur-sm z-40 transition-all duration-300 py-3 px-4 border-b border-border">
+            <div className="flex justify-between items-center max-w-screen-md mx-auto">
+              <button 
+                className="flex items-center text-muted-foreground"
+                onClick={handleExitReading}
+              >
+                <ChevronLeft size={20} />
+                <span className="ml-1 line-clamp-1 text-sm font-medium">{book.title}</span>
               </button>
+              <div className="flex items-center space-x-3">
+                <button 
+                  className="text-muted-foreground p-1.5 hover:text-foreground transition-colors"
+                  onClick={toggleAnnotationSidebar}
+                >
+                  <List size={18} />
+                </button>
+                <button className="text-muted-foreground p-1.5 hover:text-foreground transition-colors">
+                  <BookmarkCheck size={18} />
+                </button>
+                <button className="text-muted-foreground p-1.5 hover:text-foreground transition-colors">
+                  <X size={18} onClick={handleExitReading} />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Reading content */}
         <ReaderContent
           book={book}
           readingMode={readingMode}
           contentRef={contentRef}
+          showAnnotations={!showAnnotationSidebar}
+          annotations={annotations}
+          communityHighlights={communityHighlights}
+          visibilityFilter={visibilityFilter}
+          handleTextSelection={handleTextSelection}
         />
 
         {/* Reading mode switcher */}
@@ -173,12 +283,19 @@ const BookDetail = () => {
           onModeChange={setReadingMode}
         />
         
-        {/* Selection highlight bubble - only appears when text is selected in focus mode */}
+        {/* Selection toolbar - only appears when text is selected in focus mode */}
         {readingMode === "focus" && (
           <SelectionBubble
             selectedText={selectedText}
             selectionPosition={selectionPosition}
-            onOpenComments={handleOpenComments}
+            onHighlight={handleHighlightText}
+            onAddNote={handleAddNote}
+            onShare={handleShare}
+            onGetInsights={handleGetInsights}
+            onClose={() => {
+              setSelectedText("");
+              setSelectionPosition(null);
+            }}
           />
         )}
 
@@ -190,6 +307,14 @@ const BookDetail = () => {
           comments={comments}
           onAddComment={handleAddComment}
           onLikeComment={handleLikeComment}
+        />
+        
+        {/* Annotations sidebar */}
+        <AnnotationSidebar 
+          isOpen={showAnnotationSidebar}
+          onClose={() => setShowAnnotationSidebar(false)}
+          annotations={annotations}
+          highlights={[...userHighlights, ...communityHighlights]}
         />
       </div>
     );
@@ -316,7 +441,7 @@ const BookDetail = () => {
                     <p className="text-sm">{review.text}</p>
                     <div className="flex items-center mt-2 text-xs text-muted-foreground">
                       <button className="flex items-center">
-                        <MessageSquare size={12} className="mr-1" />
+                        <MessageCircle size={12} className="mr-1" />
                         <span>Reply</span>
                       </button>
                       <span className="mx-2">•</span>
@@ -330,7 +455,7 @@ const BookDetail = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <MessageSquare size={36} className="mx-auto text-muted-foreground mb-2" />
+                <MessageCircle size={36} className="mx-auto text-muted-foreground mb-2" />
                 <h3 className="font-medium">No reviews yet</h3>
                 <p className="text-sm text-muted-foreground mt-1">
                   Be the first to review this book.
