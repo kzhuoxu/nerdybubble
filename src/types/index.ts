@@ -26,7 +26,6 @@ export interface Highlight {
   likes: number;
   comments?: Comment[];
   aiImage?: string;
-  color?: string; // Added color property for highlights
 }
 
 export interface Comment {
