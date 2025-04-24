@@ -7,11 +7,12 @@ interface ContentRendererProps {
   highlights?: Highlight[];
   mode: "focus" | "explore";
   onCommentClick?: (text: string) => void;
+  hasSentenceComment?: (text: string) => { hasUserComment: boolean, hasOtherComment: boolean };
 }
 
-const ContentRenderer = ({ content, highlights = [], mode, onCommentClick }: ContentRendererProps) => {
+const ContentRenderer = ({ content, highlights = [], mode, onCommentClick, hasSentenceComment }: ContentRendererProps) => {
   if (mode === "focus") {
-    return <>{renderContentWithHighlights(content, highlights, onCommentClick)}</>;
+    return <>{renderContentWithHighlights(content, highlights, onCommentClick, hasSentenceComment)}</>;
   } else {
     return (
       <>
@@ -41,7 +42,8 @@ const ContentRenderer = ({ content, highlights = [], mode, onCommentClick }: Con
 const renderContentWithHighlights = (
   content: string, 
   highlights: Highlight[] = [],
-  onCommentClick?: (text: string) => void
+  onCommentClick?: (text: string) => void,
+  hasSentenceComment?: (text: string) => { hasUserComment: boolean, hasOtherComment: boolean }
 ) => {
   // For demo purposes, split content into paragraphs
   const paragraphs = content.split("\n\n").filter(p => p.trim() !== "");
@@ -83,6 +85,11 @@ const renderContentWithHighlights = (
         const isCurrentUserHighlight = highlight.userId === CURRENT_USER.id;
         const hasComments = highlight.comments && highlight.comments.length > 0;
         
+        // Check for comments on this text if available
+        const commentStatus = hasSentenceComment && hasSentenceComment(highlight.text);
+        const hasUserComment = commentStatus?.hasUserComment || false;
+        const hasOtherComment = commentStatus?.hasOtherComment || false;
+        
         // Add the highlighted text with appropriate styling
         result.push(
           <span 
@@ -91,8 +98,14 @@ const renderContentWithHighlights = (
               cursor-pointer
               ${isCurrentUserHighlight ? "highlight" : ""}
               ${hasComments ? (isCurrentUserHighlight ? "border-b-2 border-app-blue-500" : "border-b-2 border-dashed border-app-blue-300") : ""}
+              ${hasUserComment ? "border-b-2 border-app-blue-500" : ""}
+              ${hasOtherComment ? "border-b-2 border-dashed border-app-blue-300" : ""}
             `}
-            onClick={() => hasComments && onCommentClick && onCommentClick(highlight.text)}
+            onClick={() => {
+              if (hasComments || hasUserComment || hasOtherComment) {
+                onCommentClick && onCommentClick(highlight.text);
+              }
+            }}
           >
             {highlight.text}
           </span>
@@ -111,6 +124,49 @@ const renderContentWithHighlights = (
       }
       
       return <p key={index}>{result}</p>;
+    }
+    
+    // For paragraphs with no highlights, check for sentence comments
+    if (hasSentenceComment) {
+      // Simple sentence splitting (this is a basic approach)
+      const sentences = paragraph.split(". ").map((s, i, arr) => 
+        i < arr.length - 1 ? s + "." : s
+      );
+      
+      if (sentences.length > 1) {
+        const result: React.ReactNode[] = [];
+        
+        sentences.forEach((sentence, sIndex) => {
+          const commentStatus = hasSentenceComment(sentence);
+          
+          if (commentStatus.hasUserComment || commentStatus.hasOtherComment) {
+            result.push(
+              <span 
+                key={`${index}-sentence-${sIndex}`} 
+                className={`cursor-pointer ${
+                  commentStatus.hasUserComment 
+                    ? "border-b-2 border-app-blue-500" 
+                    : "border-b-2 border-dashed border-app-blue-300"
+                }`}
+                onClick={() => onCommentClick && onCommentClick(sentence)}
+              >
+                {sentence}
+              </span>
+            );
+          } else {
+            result.push(
+              <span key={`${index}-sentence-${sIndex}`}>{sentence}</span>
+            );
+          }
+          
+          // Add space between sentences except for the last one
+          if (sIndex < sentences.length - 1) {
+            result.push(<span key={`${index}-space-${sIndex}`}> </span>);
+          }
+        });
+        
+        return <p key={index}>{result}</p>;
+      }
     }
     
     return <p key={index}>{paragraph}</p>;
