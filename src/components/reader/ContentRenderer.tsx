@@ -97,9 +97,9 @@ const renderContentWithHighlights = (
             className={`
               cursor-pointer
               ${isCurrentUserHighlight ? "highlight bg-yellow-200" : ""}
-              ${hasComments ? (isCurrentUserHighlight ? "border-b-2 border-app-blue-500" : "border-b-2 border-dashed border-app-blue-300") : ""}
-              ${hasUserComment ? "border-b-2 border-app-blue-500" : ""}
-              ${hasOtherComment ? "border-b-2 border-dashed border-app-blue-300" : ""}
+              ${hasComments ? (isCurrentUserHighlight ? "comment-underline border-b-2 border-app-blue-500" : "comment-underline-others border-b-2 border-dashed border-app-blue-300") : ""}
+              ${hasUserComment ? "comment-underline border-b-2 border-app-blue-500" : ""}
+              ${hasOtherComment ? "comment-underline-others border-b-2 border-dashed border-app-blue-300" : ""}
             `}
             onClick={() => {
               if (hasComments || hasUserComment || hasOtherComment) {
@@ -145,8 +145,8 @@ const renderContentWithHighlights = (
                 key={`${index}-sentence-${sIndex}`} 
                 className={`cursor-pointer ${
                   commentStatus.hasUserComment 
-                    ? "border-b-2 border-app-blue-500" 
-                    : "border-b-2 border-dashed border-app-blue-300"
+                    ? "comment-underline border-b-2 border-app-blue-500" 
+                    : "comment-underline-others border-b-2 border-dashed border-app-blue-300"
                 }`}
                 onClick={() => onCommentClick && onCommentClick(sentence)}
               >
