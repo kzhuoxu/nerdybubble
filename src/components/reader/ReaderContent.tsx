@@ -7,6 +7,7 @@ import { Book, ReadingMode, Highlight as HighlightType } from "@/types";
 import { CURRENT_USER } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { HighlightColor } from "./HighlightColorPicker";
+import { HIGHLIGHT_COLORS } from "./HighlightColorPicker";
 
 interface ReaderContentProps {
   book: Book;
@@ -41,36 +42,36 @@ const ReaderContent = ({
   return (
     <ScrollArea 
       className={cn(
-        "h-screen",
-        showAnnotations ? "pr-[320px]" : "pr-4"
+        "h-screen pt-8 pb-20",
+        showAnnotations && "pr-80"
       )} 
       ref={scrollAreaRef}
     >
       <div 
         className={cn(
-          "reader-content mx-auto py-8 px-4 md:px-8 max-w-3xl transition-all duration-200 ease-in-out",
-          readingMode === "focus" ? "focus-mode" : "explore-mode"
+          "reader-content px-4 md:px-8 pb-28 max-w-screen-md mx-auto",
+          readingMode === "focus" ? "focus-mode" : "explore-mode",
+          showAnnotations && "mr-80"
         )}
         ref={contentRef}
         onMouseUp={handleTextSelection}
         onTouchEnd={handleTextSelection}
       >
-        <div>
+        <div className="pt-4">
           <h1 className="text-2xl md:text-3xl font-semibold mb-6">Chapter 1: The Beginning</h1>
-          <div className="relative flex">
-            <div className="flex-1 prose dark:prose-invert max-w-none">
-              <ContentRenderer 
-                content={book.content || ""} 
-                mode={readingMode}
-                highlights={visibleHighlights}
-              />
-            </div>
+          <div className="relative">
+            <ContentRenderer 
+              content={book.content || ""} 
+              mode={readingMode}
+              highlights={visibleHighlights}
+            />
             
             {/* Margin annotations */}
             {showAnnotations && annotations.length > 0 && (
-              <div className="fixed right-4 top-[80px] w-72 h-[calc(100vh-80px)] overflow-y-auto bg-background/95 backdrop-blur-sm border-l border-border pl-4">
+              <div className="absolute right-[-350px] top-0 w-64">
                 {annotations.map((annotation) => (
-                  <div key={annotation.id} className="mb-6">
+                  <div key={annotation.id} className="mb-6 mt-12">
+                    <div className="border-t border-gray-200 mb-2"></div>
                     <div className="text-sm text-muted-foreground mb-1">Note</div>
                     <div className="text-sm">{annotation.text}</div>
                     <div className="flex items-center mt-1">
