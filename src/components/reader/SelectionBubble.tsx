@@ -1,13 +1,23 @@
 
-import { MessageCircle, MoreHorizontal } from "lucide-react";
+import { MessageCircle, MoreHorizontal, Trash2 } from "lucide-react";
 
 interface SelectionBubbleProps {
   selectedText: string;
   selectionPosition: { x: number, y: number } | null;
   onOpenComments: () => void;
+  isHighlighted?: boolean;
+  onHighlight?: (color?: string) => void;
+  onRemoveHighlight?: () => void;
 }
 
-const SelectionBubble = ({ selectedText, selectionPosition, onOpenComments }: SelectionBubbleProps) => {
+const SelectionBubble = ({ 
+  selectedText, 
+  selectionPosition, 
+  onOpenComments,
+  isHighlighted = false, 
+  onHighlight,
+  onRemoveHighlight
+}: SelectionBubbleProps) => {
   if (!selectedText || !selectionPosition) return null;
   
   return (
@@ -19,16 +29,36 @@ const SelectionBubble = ({ selectedText, selectionPosition, onOpenComments }: Se
       }}
     >
       <div className="bg-background/95 backdrop-blur-sm shadow-lg rounded-full border border-border py-1.5 px-3 flex items-center space-x-3">
-        <button className="text-muted-foreground hover:text-yellow-500 transition-colors p-1">
-          <span className="bg-yellow-200 h-4 w-4 block rounded-full"></span>
-        </button>
+        {!isHighlighted ? (
+          <button 
+            className="text-muted-foreground hover:text-yellow-500 transition-colors p-1"
+            onClick={() => onHighlight && onHighlight('yellow')}
+            aria-label="Highlight text"
+          >
+            <span className="bg-yellow-200 h-4 w-4 block rounded-full"></span>
+          </button>
+        ) : (
+          <button 
+            className="text-muted-foreground hover:text-destructive transition-colors p-1"
+            onClick={() => onRemoveHighlight && onRemoveHighlight()}
+            aria-label="Remove highlight"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
+        
         <button 
           className="text-muted-foreground hover:text-app-blue-500 transition-colors p-1"
           onClick={onOpenComments}
+          aria-label="Comment on text"
         >
           <MessageCircle size={16} />
         </button>
-        <button className="text-muted-foreground hover:text-foreground transition-colors p-1">
+        
+        <button 
+          className="text-muted-foreground hover:text-foreground transition-colors p-1"
+          aria-label="More options"
+        >
           <MoreHorizontal size={16} />
         </button>
       </div>

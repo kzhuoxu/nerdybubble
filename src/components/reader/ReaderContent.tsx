@@ -2,15 +2,23 @@
 import { useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ContentRenderer from "./ContentRenderer";
-import { Book, ReadingMode } from "@/types";
+import { Book, ReadingMode, Highlight } from "@/types";
 
 interface ReaderContentProps {
   book: Book;
   readingMode: ReadingMode;
   contentRef: React.RefObject<HTMLDivElement>;
+  highlights?: Highlight[];
+  onCommentClick?: (text: string) => void;
 }
 
-const ReaderContent = ({ book, readingMode, contentRef }: ReaderContentProps) => {
+const ReaderContent = ({ 
+  book, 
+  readingMode, 
+  contentRef,
+  highlights = [],
+  onCommentClick
+}: ReaderContentProps) => {
   return (
     <ScrollArea className="h-screen pt-8 pb-20" ref={contentRef}>
       <div className={`reader-content px-4 md:px-8 pb-28 max-w-screen-md mx-auto ${readingMode === "focus" ? "focus-mode" : "explore-mode"}`}>
@@ -19,6 +27,8 @@ const ReaderContent = ({ book, readingMode, contentRef }: ReaderContentProps) =>
           <ContentRenderer 
             content={book.content || ""} 
             mode={readingMode}
+            highlights={highlights}
+            onCommentClick={onCommentClick}
           />
           
           {readingMode === "explore" && book.category === "Fiction" && (

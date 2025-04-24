@@ -135,4 +135,13 @@
   .ai-highlight:hover {
     @apply bg-app-teal-100/50;
   }
+  
+  /* New styles for underlined comments */
+  .comment-underline {
+    @apply border-b-2 border-app-blue-500 cursor-pointer;
+  }
+  
+  .comment-underline-others {
+    @apply border-b-2 border-dashed border-app-blue-300 cursor-pointer;
+  }
 }
