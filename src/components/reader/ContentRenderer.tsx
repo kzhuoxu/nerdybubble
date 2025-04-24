@@ -96,7 +96,7 @@ const renderContentWithHighlights = (
             key={`${index}-highlight-${hIndex}`}
             className={`
               cursor-pointer
-              ${isCurrentUserHighlight ? "highlight" : ""}
+              ${isCurrentUserHighlight ? "highlight bg-yellow-200" : ""}
               ${hasComments ? (isCurrentUserHighlight ? "border-b-2 border-app-blue-500" : "border-b-2 border-dashed border-app-blue-300") : ""}
               ${hasUserComment ? "border-b-2 border-app-blue-500" : ""}
               ${hasOtherComment ? "border-b-2 border-dashed border-app-blue-300" : ""}
@@ -184,7 +184,7 @@ const renderContentWithAIHighlights = (content: string) => {
       return (
         <p key={index}>
           {paragraph.substring(0, 30)}
-          <span className="ai-highlight">{paragraph.substring(30, 100)}</span>
+          <span className="ai-highlight bg-yellow-100">{paragraph.substring(30, 100)}</span>
           {paragraph.substring(100)}
         </p>
       );
