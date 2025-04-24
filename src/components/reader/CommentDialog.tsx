@@ -3,16 +3,12 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Comment } from "@/types";
-import { useToast } from "@/hooks/use-toast";
 
 interface CommentDialogProps {
   isOpen: boolean;
   onClose: () => void;
   selectedText: string;
   onAddComment: (text: string) => void;
-  comments?: Comment[];
-  onLikeComment?: (commentId: string) => void;
 }
 
 const CommentDialog = ({
@@ -20,21 +16,13 @@ const CommentDialog = ({
   onClose,
   selectedText,
   onAddComment,
-  comments = [],
-  onLikeComment,
 }: CommentDialogProps) => {
   const [newComment, setNewComment] = useState("");
-  const { toast } = useToast();
 
   const handleAddComment = () => {
     if (newComment.trim()) {
       onAddComment(newComment);
       setNewComment("");
-      toast({
-        title: "Comment added",
-        description: "Your comment was successfully added.",
-      });
-      onClose();
     }
   };
 

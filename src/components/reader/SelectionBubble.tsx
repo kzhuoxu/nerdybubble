@@ -1,5 +1,5 @@
 
-import { Highlighter, MessageCircle, MoreHorizontal, Trash2 } from "lucide-react";
+import { MessageCircle, MoreHorizontal, Trash2 } from "lucide-react";
 
 interface SelectionBubbleProps {
   selectedText: string;
@@ -35,7 +35,7 @@ const SelectionBubble = ({
             onClick={() => onHighlight && onHighlight('yellow')}
             aria-label="Highlight text"
           >
-            <Highlighter size={16} />
+            <span className="bg-yellow-200 h-4 w-4 block rounded-full"></span>
           </button>
         ) : (
           <button 
